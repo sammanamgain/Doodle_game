@@ -7,6 +7,7 @@ import { Player } from "./class/Player";
 import { randomNumber } from "./utils/utils";
 import { detectCollision } from "./utils/colliiondetection";
 import { BrokenTiles } from "./class/Brokentiles";
+import { MovingTiles } from "./class/Movingtiles.ts";
 
 let starttime = new Date();
 import { Enemy } from "./class/Enemy";
@@ -15,7 +16,11 @@ import {
   drawOpeningBackground,
   drawClosingBackground,
 } from "./utils/BackgroundImage";
-import { drawStartScreen, drawGameOver } from "./components/screen";
+import {
+  drawStartScreen,
+  drawGameOver,
+  drawPauseScreen,
+} from "./components/screen";
 
 window.onload = () => {
   const canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -29,7 +34,7 @@ window.onload = () => {
   const jumpspeed = -12;
   const gravity = 0.4;
   let gameState = "start";
-
+  let MovingTilesCounter = 0;
   canvas.width = canvasWidth;
   canvas.height = canvasHeight;
 
@@ -41,14 +46,26 @@ window.onload = () => {
       let randomX = Math.floor(Math.random() * (canvasWidth - platformWidth));
       let randomY = canvasHeight - 75 * i - 150;
 
-      let platform = new Platform(
-        new Center(randomX, randomY),
-        platformWidth,
-        platformHeight,
-        ctx,
-        "./platform.png"
-      );
-      platforms.push(platform);
+      if (i == 4) {
+        let platform = new MovingTiles(
+          new Center(randomX, randomY),
+          platformWidth,
+          platformHeight,
+          ctx,
+          "./platform.png"
+        );
+        platform.update();
+        platforms.push(platform);
+      } else {
+        let platform = new Platform(
+          new Center(randomX, randomY),
+          platformWidth,
+          platformHeight,
+          ctx,
+          "./platform.png"
+        );
+        platforms.push(platform);
+      }
     }
   }
 
@@ -86,14 +103,28 @@ window.onload = () => {
     // to ensure new platform generatese at at elast 50 distance from nearest platform
     let newY = highestPlatform - Math.random() * 50 - 50;
 
-    let platform = new Platform(
-      new Center(randomX, newY),
-      platformWidth,
-      platformHeight,
-      ctx,
-      "./platform.png"
-    );
-    platforms.push(platform);
+    if (MovingTilesCounter % 5 == 0) {
+      let platform = new MovingTiles(
+        new Center(randomX, newY),
+        platformWidth,
+        platformHeight,
+        ctx,
+        "./platform.png"
+      );
+      platform.update();
+      platforms.push(platform);
+    } else {
+      let platform = new Platform(
+        new Center(randomX, newY),
+        platformWidth,
+        platformHeight,
+        ctx,
+        "./platform.png"
+      );
+
+      platforms.push(platform);
+    }
+    MovingTilesCounter++;
   }
   let enemy: Enemy;
 
@@ -139,6 +170,8 @@ window.onload = () => {
 
     if (gameState === "start") {
       drawStartScreen();
+    } else if (gameState == "pause") {
+      drawPauseScreen();
     } else if (gameState === "playing") {
       if (gameover) {
         drawGameOver(score);
@@ -172,6 +205,7 @@ window.onload = () => {
 
         for (let i = platforms.length - 1; i >= 0; i--) {
           let platform = platforms[i];
+          platform.update();
           platform.draw();
 
           // detecting is not sufficient , need to check if vertical velocity is greater or not, if it is falling , only we will bounce character
@@ -192,40 +226,6 @@ window.onload = () => {
           }
         }
 
-        // for (let i = Brokenplatforms.length - 1; i >= 0; i--) {
-        //   let broken = Brokenplatforms[i];
-        //   if (detectCollision(broken, doodle)) {
-        //     console.log("collision with broken platform");
-        //     let tiles = ["./broken.1.png", "./broken2.png"];
-        //     let i = 0;
-        //     function animate() {
-        //       broken.img.src = tiles[i];
-        //       broken.vy = 5; // Set the vertical velocity of the broken tile
-        //       i = (i + 1) % tiles.length; // Cycle through the tiles array
-        //       broken.position.y += broken.vy; // Update the position of the broken tile
-        //       doodle.vy = 5; // Set the vertical velocity of the player
-        //       doodle.update(); // Update the player's position
-        //       broken.draw();
-        //       if (broken.position.y > canvasHeight) {
-        //         // If the broken tile goes off the canvas, remove it from the array
-        //         Brokenplatforms.splice(i, 1);
-        //         clearInterval(animationInterval); // Stop the animation
-        //       }
-        //     }
-        //     setTimeout(() => {
-        //       animate();
-        //     }, 1000);
-
-        //     doodle.vy = 5;
-
-        //     doodle.update();
-
-        //     console.log(doodle.vy);
-        //   }
-        //   broken.update(canvasHeight);
-        //   broken.draw();
-        // }
-
         doodle.draw();
         if (doodle.vy < 0 && doodle.position.y < canvasHeight / 2) {
           let platformSpeed = -doodle.vy;
@@ -245,7 +245,9 @@ window.onload = () => {
       ctx.fillText(`Score: ${score}`, 5, 20);
     }
 
-    requestAnimationFrame(update);
+    if (gameState != "pause") {
+      requestAnimationFrame(update);
+    }
   }
   update();
 
@@ -254,6 +256,15 @@ window.onload = () => {
       resetGame();
     } else if (e.key === " " && gameState === "playing" && gameover) {
       resetGame();
+    } else if (e.key == "p") {
+      if (gameState === "playing") {
+        gameState = "pause";
+      } else if (gameState == "pause") {
+        gameState = "playing";
+        requestAnimationFrame(update);
+      }
+    } else if (e.key == "p" && gameState == "pause") {
+      gameState = "playing";
     }
   });
 };

@@ -8,7 +8,7 @@ const canvasWidth = 360;
 const canvasHeight = 540;
 const canvas = document.getElementById("canvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
-export function drawGameOver(score:number) {
+export function drawGameOver(score: number) {
   let highscore = localStorage.getItem("doodle_score");
   let ishighscore = false;
   highscore = highscore ? parseInt(highscore) : 0;
@@ -65,6 +65,27 @@ export function drawStartScreen() {
   ctx.fillStyle = "green";
   ctx.font = "36px 'Comic Neue', sans-serif";
   ctx.fillText("press Enter to start", canvasWidth / 2 - 140, 350);
+
+  ctx.beginPath();
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 3;
+  ctx.roundRect(canvasWidth / 2 - 60, 210, 120, 50, 10);
+  ctx.stroke();
+}
+export function drawPauseScreen() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawOpeningBackground();
+
+  ctx.fillStyle = "red";
+  ctx.font = "48px 'Comic Neue', sans-serif";
+  ctx.fillText("doodle jump", canvasWidth / 2 - 120, 100);
+
+  ctx.fillStyle = "black";
+  ctx.font = "36px 'Comic Neue', sans-serif";
+  ctx.fillText("play", canvasWidth / 2 - 30, 250);
+  ctx.fillStyle = "green";
+  ctx.font = "36px 'Comic Neue', sans-serif";
+  ctx.fillText("press P to resume ", canvasWidth / 2 - 140, 350);
 
   ctx.beginPath();
   ctx.strokeStyle = "black";

@@ -19,7 +19,6 @@ export class Platform {
   }
 
   draw() {
-
     this.ctx.drawImage(
       this.image,
       this.position.x,
@@ -27,6 +26,10 @@ export class Platform {
       this.width,
       this.height
     );
+  }
+
+  move() {
+    this.position.x += 1;
   }
 
   update(canvasHeight) {
