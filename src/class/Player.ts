@@ -44,7 +44,7 @@ export class Player {
     this.vy += this.gravity;
     this.position.y += this.vy;
 
-    // Wrap around horizontally
+
     if (this.position.x > canvas.width) {
       this.position.x = 0;
     } else if (this.position.x + this.width < 0) {

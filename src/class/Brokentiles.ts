@@ -7,7 +7,7 @@ export class Center {
   }
 }
 
-export class Platform {
+export class BrokenTiles {
   constructor(position, width, height, ctx, src: string) {
     this.position = position;
     this.width = width;
@@ -19,7 +19,7 @@ export class Platform {
   }
 
   draw() {
-
+    console.log("broken platform draw called");
     this.ctx.drawImage(
       this.image,
       this.position.x,
