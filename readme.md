@@ -22,6 +22,7 @@ A fun and challenging platformer game where you control a character and navigate
 - High score tracking
 - Enemy spawning every 10 seconds
 - Moving platforms
+- Pause and Play (use p key to this)
 
 ## Installation
 
