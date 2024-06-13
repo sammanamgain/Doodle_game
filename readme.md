@@ -21,9 +21,18 @@ Screen wrapping: When the player moves off one edge of the screen, they reappear
 
 ## Extra feature I have Implemented
 
+<ul>
+<li>
 Sound Effect
+</li>
+<li>
 High score
+</li>
+<li>
 Enemy at each 10 seconds
+</li>
+
+</ul>
 
 ## Installation
 
